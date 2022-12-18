@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1025385511240",
+    "project_id": "west-bank-az-gsk",
+    "storage_bucket": "west-bank-az-gsk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1025385511240:android:667e8a3300ef449b565b7d",
+        "android_client_info": {
+          "package_name": "com.example.firebase_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1025385511240-o903n8bag0a16hpqc85253f844bk04pu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdon2fcrBe_H7JV6WbpiueOWFbJV8wuRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1025385511240-o903n8bag0a16hpqc85253f844bk04pu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1025385511240-daralc6ki2kknmudtgk8ndhmpev44cpp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.firebaseApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
