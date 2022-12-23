@@ -24,7 +24,7 @@ class _CustomeCarouselSliderState extends State<CustomeCarouselSlider> {
               setState(() {});
             },
             height: 250.0,
-            autoPlay: true,
+            // autoPlay: true,
             viewportFraction: 1),
         items: widget.selectImages.map((i) {
           return Builder(

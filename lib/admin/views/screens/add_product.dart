@@ -1,4 +1,5 @@
 import 'package:firebase_app/admin/providers/admin_provider.dart';
+import 'package:firebase_app/auth/components/custom_scaffold.dart';
 import 'package:firebase_app/auth/components/custom_textformfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,10 +8,8 @@ class AddNewProduct extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("New Product"),
-      ),
+    return CustomScaffold(
+      title: "New Product",
       body: Consumer<AdminProvider>(builder: (context, provider, w) {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),

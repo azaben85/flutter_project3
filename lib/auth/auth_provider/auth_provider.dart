@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:firebase_app/admin/views/screens/display_categories.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/auth/auth_helper.dart';
+import 'package:firebase_app/customer/customer_main_screen.dart';
 import 'package:firebase_app/data_repository/firestore_helper.dart';
 import 'package:firebase_app/data_repository/storage_helper.dart';
 import 'package:firebase_app/models/app_user.dart';
-import 'package:firebase_app/screens/main_screen.dart';
 import 'package:firebase_app/screens/sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +15,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:string_validator/string_validator.dart';
 
 class AuthProvider extends ChangeNotifier {
+  AuthProvider() {
+    checkUserInit();
+  }
   GlobalKey<FormState> signInKey = GlobalKey<FormState>();
   GlobalKey<FormState> signUpKey = GlobalKey<FormState>();
   TextEditingController registerEmail = TextEditingController();
@@ -81,7 +84,7 @@ class AuthProvider extends ChangeNotifier {
         log(loggedUser!.name!);
         clearFields();
         notifyListeners();
-        AppRouter.appRouter.pushReplacement(MainScreen());
+        AppRouter.appRouter.pushReplacementAll(CustomerMainScreen());
       }
     }
   }
@@ -102,7 +105,7 @@ class AuthProvider extends ChangeNotifier {
         clearFields();
         notifyListeners();
 
-        AppRouter.appRouter.pushReplacement(MainScreen());
+        AppRouter.appRouter.pushReplacement(CustomerMainScreen());
       }
     }
   }
@@ -123,9 +126,21 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  checkUserInit() async {
+    User? user = AuthHelper.authHelper.getLoggedUser();
+    await Future.delayed(Duration(seconds: 3));
+    if (user != null) {
+      loggedUser =
+          await FirestorHelper.firestorHelper.getUserFromFirestore(user.uid);
+      loggedUser!.email = user.email;
+
+      notifyListeners();
+    }
+  }
+
   signOut() async {
     await AuthHelper.authHelper.signOut();
-    AppRouter.appRouter.pushReplacement(SignIn());
+    AppRouter.appRouter.pushReplacement(CustomerMainScreen());
   }
 
   uploadNewFile() async {

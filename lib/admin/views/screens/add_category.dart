@@ -1,4 +1,5 @@
 import 'package:firebase_app/admin/providers/admin_provider.dart';
+import 'package:firebase_app/auth/components/custom_scaffold.dart';
 import 'package:firebase_app/auth/components/custom_textformfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,10 +8,8 @@ class AddNewCategory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AdminProvider>(builder: (context, provider, child) {
-      return Scaffold(
-          appBar: AppBar(
-              title:
-                  Text('${provider.catID == null ? 'Add' : 'Edit'} Category')),
+      return CustomScaffold(
+          title: '${provider.catID == null ? 'Add' : 'Edit'} Category',
           body: Form(
             key: provider.categoryKey,
             child: Column(

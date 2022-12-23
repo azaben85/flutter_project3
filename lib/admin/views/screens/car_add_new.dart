@@ -1,4 +1,5 @@
 import 'package:firebase_app/auth/components/custom_customcheckboxlisttile.dart';
+import 'package:firebase_app/auth/components/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,10 +30,8 @@ class AddNewCar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<CarProvider>(builder: (context, provider, child) {
-      return Scaffold(
-          appBar: AppBar(
-              title:
-                  Text('${provider.selectedCar == null ? 'Add' : 'Edit'} Car')),
+      return CustomScaffold(
+          title: '${provider.selectedCar == null ? 'Add' : 'Edit'} Car',
           body: Form(
             key: provider.carKey,
             child: ListView(

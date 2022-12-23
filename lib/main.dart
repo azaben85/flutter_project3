@@ -9,6 +9,7 @@ import 'package:firebase_app/maps/custom_map.dart';
 import 'package:firebase_app/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -68,13 +69,17 @@ class InitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        navigatorKey: AppRouter.appRouter.navigatorKey,
-        // theme: Provider.of<ToDoClassProvider>(context).isDarkMode
-        //     ? ThemeData.dark()
-        //     : ThemeData.light(),
-        debugShowCheckedModeBanner: false,
-        title: 'ToDo APP',
-        home: CustomerMainScreen());
+    return ScreenUtilInit(
+        designSize: const Size(390, 844),
+        builder: (BuildContext context, Widget? child) {
+          return MaterialApp(
+              navigatorKey: AppRouter.appRouter.navigatorKey,
+              // theme: Provider.of<ToDoClassProvider>(context).isDarkMode
+              //     ? ThemeData.dark()
+              //     : ThemeData.light(),
+              debugShowCheckedModeBanner: false,
+              title: 'ToDo APP',
+              home: CustomerMainScreen());
+        });
   }
 }

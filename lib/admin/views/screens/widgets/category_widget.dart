@@ -28,7 +28,7 @@ class CategoryWidget extends StatelessWidget {
             child: Stack(
               children: [
                 SizedBox(
-                    width: double.infinity,
+                    width: 350,
                     height: 170,
                     child: Image.network(
                       category.imageUrl,

@@ -1,12 +1,14 @@
 import 'dart:developer';
 
 import 'package:firebase_app/admin/models/cars.dart';
-import 'package:firebase_app/admin/views/screens/car_add_new.dart';
+import 'package:firebase_app/admin/models/mylist.dart';
 import 'package:firebase_app/admin/views/screens/widgets/image_source_widget.dart';
 import 'package:firebase_app/app_router/app_router.dart';
+import 'package:firebase_app/auth/auth_helper.dart';
 import 'package:firebase_app/data_repository/firestore_helper.dart';
 import 'package:firebase_app/data_repository/image_picker_helper.dart';
 import 'package:firebase_app/data_repository/storage_helper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
 
@@ -14,6 +16,7 @@ class CarProvider extends ChangeNotifier {
   CarProvider() {
     log('Get All Cars');
     getAllCars();
+
     log('Done XXXXX All Cars');
   }
   GlobalKey<FormState> carKey = GlobalKey<FormState>();
@@ -38,6 +41,12 @@ class CarProvider extends ChangeNotifier {
   List<String>? carImagesUrls;
 
   List<Car>? allCars;
+  List<Car>? myCarsList;
+  List<MyList>? allMyList;
+
+  selectCarForDetails(Car car) {
+    selectedCar = car;
+  }
 
   loadForUpdate(Car car) {
     selectedCar = car;
@@ -64,7 +73,6 @@ class CarProvider extends ChangeNotifier {
         );
       }).toList();
     }
-    AppRouter.appRouter.push(AddNewCar());
   }
 
   clearFields() {
@@ -153,7 +161,26 @@ class CarProvider extends ChangeNotifier {
 
   getAllCars() async {
     allCars = await FirestorHelper.firestorHelper.getAllCars();
+    await getAllMyList();
+    getmyCarsList();
+
     notifyListeners();
+  }
+
+  getmyCarsList() {
+    if (allCars != null && allMyList != null) {
+      myCarsList = allCars!
+          .where((car) => allMyList!
+              .where((element) => car.id == element.reference_id)
+              .isNotEmpty)
+          .toList();
+    }
+  }
+
+  getAllMyList() async {
+    allMyList = await FirestorHelper.firestorHelper.getMyList();
+
+    getmyCarsList();
   }
 
   String? validateText(String? text) {
@@ -181,6 +208,31 @@ class CarProvider extends ChangeNotifier {
     return null;
   }
 
+  bool checkIfMyList(Car car) {
+    User? user = AuthHelper.authHelper.getLoggedUser();
+    if (user == null || allMyList == null || allMyList!.isEmpty) return false;
+    if (allMyList!
+        .where((element) => element.reference_id == car.id)
+        .isNotEmpty) return true;
+    return false;
+  }
+
+  addRemoveToMyList(Car car, bool current) async {
+    User? user = AuthHelper.authHelper.getLoggedUser();
+    if (!current) {
+      MyList myList =
+          MyList(type: 'car', reference_id: car.id!, userId: user!.uid);
+      await FirestorHelper.firestorHelper.addNewMyList(myList);
+    } else {
+      MyList myList =
+          allMyList!.where((element) => element.reference_id == car.id).first;
+      await FirestorHelper.firestorHelper.deleteFromMyList(myList.id!);
+    }
+    notifyListeners();
+    await getAllMyList();
+    notifyListeners();
+  }
+
   addUpdateCar() async {
     if (carKey.currentState!.validate()) {
       AppRouter.appRouter.showProgressBar();
@@ -198,8 +250,9 @@ class CarProvider extends ChangeNotifier {
           }
         }
       }
-
+      User? user = AuthHelper.authHelper.getLoggedUser();
       Car car = Car(
+          userId: user?.uid ?? '',
           id: selectedCar?.id ?? '',
           type: type ?? '',
           model: modelTypeController.text,
@@ -219,6 +272,7 @@ class CarProvider extends ChangeNotifier {
           imageURLs: imageURLs);
       if (selectedCar == null) {
         await FirestorHelper.firestorHelper.addNewCar(car);
+        clearFields();
         getAllCars();
       } else {
         bool updated =
@@ -226,12 +280,17 @@ class CarProvider extends ChangeNotifier {
         if (updated) {
           log('Updated Car 123');
           int i = allCars!.indexOf(selectedCar!);
+
           allCars![i] = car;
+          clearFields();
+          selectedCar = car;
+
           notifyListeners();
+
+          // AppRouter.appRouter.pop();
         }
       }
 
-      clearFields();
       AppRouter.appRouter.pop();
       AppRouter.appRouter.pop();
     }

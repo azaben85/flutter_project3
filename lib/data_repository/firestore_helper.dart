@@ -5,7 +5,10 @@ import 'package:firebase_app/admin/models/cars.dart';
 import 'package:firebase_app/admin/models/category.dart';
 import 'package:firebase_app/admin/models/product.dart';
 import 'package:firebase_app/admin/models/slider.dart';
+import 'package:firebase_app/admin/models/mylist.dart';
+import 'package:firebase_app/auth/auth_helper.dart';
 import 'package:firebase_app/models/app_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestorHelper {
   FirestorHelper._();
@@ -179,5 +182,44 @@ class FirestorHelper {
       log(e.toString());
       return false;
     }
+  }
+
+  Future<String?> addNewMyList(MyList myList) async {
+    try {
+      DocumentReference<Map<String, dynamic>> document =
+          await firestore.collection('mylist').add(myList.toMap());
+      return document.id;
+    } on Exception catch (e) {
+      log(e.toString());
+    }
+    return '';
+  }
+
+  Future<bool> deleteFromMyList(String id) async {
+    try {
+      await firestore.collection('mylist').doc(id).delete();
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  Future<List<MyList>> getMyList() async {
+    User? user = AuthHelper.authHelper.getLoggedUser();
+    if (user == null) return [];
+    QuerySnapshot<Map<String, dynamic>> snapshot = await firestore
+        .collection('mylist')
+        .where('userId', isEqualTo: user.uid)
+        .where('type', isEqualTo: 'car')
+        .get();
+    List<MyList> allLists = snapshot.docs.map(
+      (e) {
+        MyList myList = MyList.fromMap(e.data());
+        myList.id = e.id;
+        return myList;
+      },
+    ).toList();
+    return allLists;
   }
 }

@@ -12,7 +12,11 @@ class LabelValue extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: Container(
-        color: (index ?? 1) % 2 == 0 ? Colors.green[50] : Colors.green[100],
+        color: (index ?? 1) == 0
+            ? Colors.white
+            : (index!) % 2 == 0
+                ? Colors.green[50]
+                : Colors.green[100],
         child: Row(
           children: [
             Expanded(

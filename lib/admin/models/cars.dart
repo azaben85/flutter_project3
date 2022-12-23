@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 class Car {
   String? id;
+  String userId;
   String type;
   String model;
   String addressCity;
@@ -18,6 +21,7 @@ class Car {
   List<String>? imageURLs;
   Car({
     this.id,
+    required this.userId,
     required this.type,
     required this.model,
     required this.addressCity,
@@ -38,6 +42,7 @@ class Car {
 
   Map<String, dynamic> toMap() {
     return {
+      'userId': userId,
       'type': type,
       'model': model,
       'addressCity': addressCity,
@@ -60,6 +65,7 @@ class Car {
   factory Car.fromMap(Map<String, dynamic> map) {
     return Car(
       id: map['id'],
+      userId: map['userId'] ?? '',
       type: map['type'] ?? '',
       model: map['model'] ?? '',
       addressCity: map['addressCity'] ?? '',
@@ -78,4 +84,8 @@ class Car {
       imageURLs: List<String>.from(map['imageURLs']),
     );
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory Car.fromJson(String source) => Car.fromMap(json.decode(source));
 }
