@@ -74,7 +74,7 @@ class AdminProvider extends ChangeNotifier {
   String? validateNumber(String? text) {
     if (text == null || text.isEmpty) {
       return 'Must have value';
-    } else if (isNumeric(text)) {
+    } else if (!isFloat(text)) {
       return 'Must be numeric';
     }
     return null;
@@ -104,7 +104,7 @@ class AdminProvider extends ChangeNotifier {
             id: catID,
             nameEn: nameEnController.text,
             imageUrl: url,
-            nameAr: nameArController.text);
+            nameAr: '');
         if (catID == null) {
           await FirestorHelper.firestorHelper.addNewCategory(category);
         } else {

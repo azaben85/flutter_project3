@@ -21,10 +21,10 @@ class AllCategoriesScreen extends StatelessWidget {
                   },
                   icon: const Icon(Icons.add))
             ],
-            title: 'All Categories',
+            title: 'الاصناف',
             body: provider.allCategories == null
                 ? const Center(
-                    child: Text('No Categories Found'),
+                    child: Text('لا يوجد اصناف'),
                   )
                 : ListView.builder(
                     itemCount: provider.allCategories!.length,

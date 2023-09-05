@@ -75,10 +75,7 @@ class CategoryWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Arabic Category' + ': ' + category.nameAr,
-                  ),
-                  Text(
-                    'English Category' + ': ' + category.nameEn,
+                    'الصنف' + ': ' + category.nameEn,
                   ),
                 ]),
           )

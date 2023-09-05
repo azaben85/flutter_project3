@@ -9,7 +9,7 @@ class AddNewProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return CustomScaffold(
-      title: "New Product",
+      title: "المنتج",
       body: Consumer<AdminProvider>(builder: (context, provider, w) {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -43,22 +43,23 @@ class AddNewProduct extends StatelessWidget {
                 ),
                 CustomTextField(
                     inputController: provider.productNameController,
-                    label: 'Product name',
+                    label: 'اسم المنتج',
                     validation: provider.validateText),
                 const SizedBox(
                   height: 20,
                 ),
                 CustomTextField(
                   inputController: provider.productDescController,
-                  label: 'Product Description',
+                  label: 'وصف المنتج',
                   validation: provider.validateText,
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 CustomTextField(
+                  inputType: TextInputType.number,
                   inputController: provider.productPriceController,
-                  label: 'Product Price',
+                  label: 'سعر المنتج',
                   validation: provider.validateNumber,
                 ),
                 //const Spacer(),
@@ -69,7 +70,7 @@ class AddNewProduct extends StatelessWidget {
                     onPressed: () {
                       provider.addProduct();
                     },
-                    child: const Text('Add New Product'),
+                    child: const Text('اضف منتج جديد'),
                   ),
                 )
               ],

@@ -9,7 +9,7 @@ class AddNewCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AdminProvider>(builder: (context, provider, child) {
       return CustomScaffold(
-          title: '${provider.catID == null ? 'Add' : 'Edit'} Category',
+          title: provider.catID == null ? 'أضف صنف جديد' : 'تعديل الصنف',
           body: Form(
             key: provider.categoryKey,
             child: Column(
@@ -32,16 +32,9 @@ class AddNewCategory extends StatelessWidget {
                   ),
                 ),
                 CustomTextField(
-                    inputController: provider.nameArController,
-                    validation: provider.validateText,
-                    label: 'Category Arabic Name'),
-                const SizedBox(
-                  height: 30,
-                ),
-                CustomTextField(
                     inputController: provider.nameEnController,
                     validation: provider.validateText,
-                    label: 'Category English Name'),
+                    label: 'الصنف'),
                 const Spacer(),
                 SizedBox(
                   width: double.infinity,
@@ -51,7 +44,7 @@ class AddNewCategory extends StatelessWidget {
                         provider.addCategory();
                       },
                       child: Text(
-                          '${provider.catID == null ? 'Add New' : 'Edit'} Category')),
+                          provider.catID == null ? 'أضف الصنف' : 'عدل الصنف')),
                 )
               ],
             ),

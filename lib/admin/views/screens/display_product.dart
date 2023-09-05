@@ -21,10 +21,10 @@ class DisplayProducts extends StatelessWidget {
                   },
                   icon: const Icon(Icons.add))
             ],
-            title: 'Display Products',
+            title: 'المنتجات',
             body: provider.allProducts == null
                 ? const Center(
-                    child: Text('No Categories Found'),
+                    child: Text('لا يوجد منتجات'),
                   )
                 : ListView.builder(
                     itemCount: provider.allProducts!.length,

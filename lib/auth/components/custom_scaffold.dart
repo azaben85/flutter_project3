@@ -20,31 +20,34 @@ class CustomScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text(
-          title ?? '',
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          title: Text(
+            title ?? '',
+          ),
+          bottom: bottomTitle != null
+              ? CustomBottomAppBar(
+                  title: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    bottomTitle!,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ))
+              : null,
+          actions: actions,
         ),
-        bottom: bottomTitle != null
-            ? CustomBottomAppBar(
-                title: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  bottomTitle!,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ))
-            : null,
-        actions: actions,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: floatingActionButton,
+        drawer: AppRouter.appRouter.canPop() ? null : CustomDrawer(),
+        body: body,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: floatingActionButton,
-      drawer: AppRouter.appRouter.canPop() ? null : CustomDrawer(),
-      body: body,
     );
   }
 }

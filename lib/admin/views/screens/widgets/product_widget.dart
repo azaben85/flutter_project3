@@ -64,10 +64,10 @@ class ProductWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Product Name' + ': ' + product.nameEn,
+                    'المنتج' + ': ' + product.nameEn,
                   ),
                   Text(
-                    'Price: ' + product.price.toString(),
+                    'السعر: ' + product.price.toString(),
                   ),
                 ]),
           )
