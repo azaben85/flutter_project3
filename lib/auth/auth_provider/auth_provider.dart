@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:firebase_app/admin/views/screens/display_categories.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/auth/auth_helper.dart';
-import 'package:firebase_app/customer/customer_main_screen.dart';
 import 'package:firebase_app/data_repository/firestore_helper.dart';
 import 'package:firebase_app/data_repository/storage_helper.dart';
 import 'package:firebase_app/models/app_user.dart';
@@ -84,7 +83,7 @@ class AuthProvider extends ChangeNotifier {
         log(loggedUser!.name!);
         clearFields();
         notifyListeners();
-        AppRouter.appRouter.pushReplacementAll(CustomerMainScreen());
+        AppRouter.appRouter.pushReplacementAll(AllCategoriesScreen());
       }
     }
   }
@@ -105,7 +104,7 @@ class AuthProvider extends ChangeNotifier {
         clearFields();
         notifyListeners();
 
-        AppRouter.appRouter.pushReplacement(CustomerMainScreen());
+        AppRouter.appRouter.pushReplacement(AllCategoriesScreen());
       }
     }
   }
@@ -140,7 +139,7 @@ class AuthProvider extends ChangeNotifier {
 
   signOut() async {
     await AuthHelper.authHelper.signOut();
-    AppRouter.appRouter.pushReplacement(CustomerMainScreen());
+    AppRouter.appRouter.pushReplacement(AllCategoriesScreen());
   }
 
   uploadNewFile() async {

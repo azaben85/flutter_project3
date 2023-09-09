@@ -1,9 +1,8 @@
 import 'package:firebase_app/admin/providers/admin_provider.dart';
-import 'package:firebase_app/admin/providers/car_provider.dart';
+import 'package:firebase_app/admin/providers/order_provider.dart';
 import 'package:firebase_app/admin/views/screens/display_categories.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/auth/auth_provider/auth_provider.dart';
-import 'package:firebase_app/customer/customer_main_screen.dart';
 import 'package:firebase_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -51,9 +50,9 @@ class MyApp extends StatelessWidget {
           return AdminProvider();
         },
       ),
-      ChangeNotifierProvider<CarProvider>(
+      ChangeNotifierProvider<OrderProvider>(
         create: (context) {
-          return CarProvider();
+          return OrderProvider();
         },
       ),
     ], child: const InitApp());

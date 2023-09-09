@@ -41,12 +41,12 @@ class SignIn extends StatelessWidget {
                       await provider.signIn();
                     },
                     child: const Text('Sign In')),
-                ElevatedButton(
-                    onPressed: () {
-                      provider.clearFields();
-                      AppRouter.appRouter.pushReplacement(SignUp());
-                    },
-                    child: const Text('Sign Up With Email'))
+                // ElevatedButton(
+                //     onPressed: () {
+                //       provider.clearFields();
+                //       AppRouter.appRouter.pushReplacement(SignUp());
+                //     },
+                //     child: const Text('Sign Up With Email'))
               ],
             ),
           ),

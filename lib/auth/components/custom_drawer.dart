@@ -21,71 +21,6 @@ class CustomDrawer extends StatelessWidget {
     User? user = AuthHelper.authHelper.getLoggedUser();
     return Drawer(
       child: ListView(children: [
-        Consumer<AuthProvider>(builder: (context, provider, child) {
-          if (user == null)
-            return const DrawerHeader(
-                padding: EdgeInsets.only(top: 16),
-                child: Center(child: Text('Select Option')));
-          return UserAccountsDrawerHeader(
-              accountName: Text(provider.loggedUser?.name ?? ''),
-              accountEmail: Text(provider.loggedUser?.email ?? ''));
-        }),
-        InkWell(
-            onTap: () {
-              AppRouter.appRouter.pop();
-              AppRouter.appRouter.push(const DisplayCars());
-            },
-            child: Row(
-              children: const [
-                Icon(Icons.car_repair_outlined),
-                Text('Cars'),
-              ],
-            )),
-        const SizedBox(
-          height: 20,
-        ),
-        InkWell(
-            onTap: () {
-              AppRouter.appRouter.pop();
-              AppRouter.appRouter.push(DisplayMyListCars());
-            },
-            child: Row(
-              children: const [
-                Icon(Icons.favorite),
-                Text('My Favorite Cars'),
-              ],
-            )),
-        const SizedBox(
-          height: 20,
-        ),
-        InkWell(
-            onTap: () {
-              AppRouter.appRouter.pop();
-              AppRouter.appRouter.push(AllCategoriesScreen());
-            },
-            child: Row(
-              children: const [
-                Icon(Icons.category),
-                Text('Display Categories'),
-              ],
-            )),
-        const SizedBox(
-          height: 20,
-        ),
-        InkWell(
-            onTap: () {
-              AppRouter.appRouter.pop();
-              AppRouter.appRouter.push(AddNewSlider());
-            },
-            child: Row(
-              children: const [
-                Icon(Icons.image),
-                Text('Manage Sliders'),
-              ],
-            )),
-        const SizedBox(
-          height: 20,
-        ),
         if (user == null)
           InkWell(
               onTap: () {
@@ -103,7 +38,7 @@ class CustomDrawer extends StatelessWidget {
           InkWell(
               onTap: () async {
                 await AuthHelper.authHelper.signOut();
-                AppRouter.appRouter.pushReplacement(CustomerMainScreen());
+                AppRouter.appRouter.pushReplacement(AllCategoriesScreen());
               },
               child: Row(
                 children: const [
