@@ -1,7 +1,6 @@
 import 'package:firebase_app/admin/models/order.dart';
 import 'package:firebase_app/admin/models/order_item.dart';
 import 'package:firebase_app/admin/models/product.dart';
-import 'package:firebase_app/admin/views/screens/add_product.dart';
 import 'package:firebase_app/data_repository/order_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +15,11 @@ class OrderProvider extends ChangeNotifier {
       OrderHelper.orderHelper.order?.items.forEach((e) => count += e.quantity);
     }
     return '$count';
+  }
+
+  cancelOrder() {
+    OrderHelper.orderHelper.cancelOrder();
+    notifyListeners();
   }
 
   addItem(Product product, String catName) {

@@ -9,3 +9,4 @@ class UrlLauncherHelper {
     }
   }
 }
+//whatsapp://send?phone=$number&text=${Uri.encodeFull('message')}

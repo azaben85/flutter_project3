@@ -14,6 +14,11 @@ class OrderHelper {
     lineNumber = 0;
   }
 
+  cancelOrder() {
+    order = null;
+    lineNumber = 0;
+  }
+
   int getLineNumber() {
     lineNumber++;
     return lineNumber;

@@ -1,5 +1,7 @@
+import 'package:firebase_app/admin/models/order.dart';
 import 'package:firebase_app/admin/providers/order_provider.dart';
 import 'package:firebase_app/admin/views/screens/add_product.dart';
+import 'package:firebase_app/admin/views/screens/display_categories.dart';
 import 'package:firebase_app/admin/views/screens/widgets/order_line_widget.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/auth/auth_helper.dart';
@@ -7,6 +9,7 @@ import 'package:firebase_app/auth/components/custom_scaffold.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DisplayOrderDetails extends StatelessWidget {
   DisplayOrderDetails({super.key});
@@ -17,15 +20,6 @@ class DisplayOrderDetails extends StatelessWidget {
     return Consumer<OrderProvider>(
       builder: (context, provider, w) {
         return CustomScaffold(
-            actions: user != null
-                ? [
-                    IconButton(
-                        onPressed: () {
-                          AppRouter.appRouter.push(AddNewProduct());
-                        },
-                        icon: const Icon(Icons.add)),
-                  ]
-                : null,
             title: 'تفاصيل الطلبة',
             body: provider.getOrderDetails() == null
                 ? const Center(
@@ -135,11 +129,61 @@ class DisplayOrderDetails extends StatelessWidget {
                               ],
                             ),
                           ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                provider.cancelOrder();
+                              },
+                              child: const Text('الغاء الطلب'),
+                            ),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                goToWhatsUp(provider.getOrderDetails()!);
+                                provider.cancelOrder();
+                                AppRouter.appRouter
+                                    .pushReplacementAll(AllCategoriesScreen());
+                                AppRouter.appRouter.pop();
+                              },
+                              child: const Text('تأكيد الطلب'),
+                            ),
+                          )
                         ],
                       )
                     ],
                   ));
       },
     );
+  }
+
+  goToWhatsUp(OrderModel order) async {
+    String message = '''
+    طلبية جديدة رقم: ${order.orderNumber}
+    المنتجات التالية:
+    ''';
+    order.items.forEach((element) {
+      message = message +
+          '''
+    ${element.lineNumber} - ${element.nameEn} عدد (${element.quantity})
+    ''';
+    });
+    message = message +
+        '''
+    بمجموع ${order.totalPrice} شامل ${order.shippingAmount} شيكل توصيل
+    ''';
+
+    String url =
+        "whatsapp://send?phone=+972598027987&text=${Uri.encodeFull(message)}";
+    if (!await launchUrl(Uri.parse(url))) {
+      throw 'Could not launch $url';
+    }
   }
 }
