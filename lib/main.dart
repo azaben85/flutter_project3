@@ -1,6 +1,7 @@
 import 'package:firebase_app/admin/providers/admin_provider.dart';
 import 'package:firebase_app/admin/providers/order_provider.dart';
 import 'package:firebase_app/admin/views/screens/display_categories.dart';
+import 'package:firebase_app/admin/views/screens/display_categories_customer.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/auth/auth_provider/auth_provider.dart';
 import 'package:firebase_app/firebase_options.dart';
@@ -76,7 +77,7 @@ class InitApp extends StatelessWidget {
               //     : ThemeData.light(),
               debugShowCheckedModeBanner: false,
               title: 'ToDo APP',
-              home: AllCategoriesScreen() // CustomerMainScreen()
+              home: AllCategoriesCustomerScreen() // CustomerMainScreen()
               );
         });
   }

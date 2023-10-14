@@ -1,5 +1,6 @@
 import 'package:firebase_app/admin/providers/admin_provider.dart';
 import 'package:firebase_app/admin/views/screens/add_category.dart';
+import 'package:firebase_app/admin/views/screens/commerce_settings_screen.dart';
 import 'package:firebase_app/admin/views/screens/widgets/cart_icon_widget.dart';
 import 'package:firebase_app/admin/views/screens/widgets/category_widget.dart';
 import 'package:firebase_app/app_router/app_router.dart';
@@ -25,7 +26,13 @@ class AllCategoriesScreen extends StatelessWidget {
                           provider.clearCatFields();
                           AppRouter.appRouter.push(AddNewCategory());
                         },
-                        icon: const Icon(Icons.add))
+                        icon: const Icon(Icons.add)),
+                    IconButton(
+                        onPressed: () {
+                          provider.clearCatFields();
+                          AppRouter.appRouter.push(CommerceSettingsScreen());
+                        },
+                        icon: const Icon(Icons.settings)),
                   ]
                 : [CartIcon()],
             title: 'الاصناف',

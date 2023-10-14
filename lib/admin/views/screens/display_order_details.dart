@@ -1,6 +1,5 @@
 import 'package:firebase_app/admin/models/order.dart';
 import 'package:firebase_app/admin/providers/order_provider.dart';
-import 'package:firebase_app/admin/views/screens/add_product.dart';
 import 'package:firebase_app/admin/views/screens/display_categories.dart';
 import 'package:firebase_app/admin/views/screens/widgets/order_line_widget.dart';
 import 'package:firebase_app/app_router/app_router.dart';
@@ -147,7 +146,8 @@ class DisplayOrderDetails extends StatelessWidget {
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () {
-                                goToWhatsUp(provider.getOrderDetails()!);
+                                goToWhatsUp(provider.getOrderDetails()!,
+                                    provider.settings?.whatsappNumber ?? "");
                                 provider.cancelOrder();
                                 AppRouter.appRouter
                                     .pushReplacementAll(AllCategoriesScreen());
@@ -164,7 +164,7 @@ class DisplayOrderDetails extends StatelessWidget {
     );
   }
 
-  goToWhatsUp(OrderModel order) async {
+  goToWhatsUp(OrderModel order, String whatsappNumber) async {
     String message = '''
     طلبية جديدة رقم: ${order.orderNumber}
     المنتجات التالية:
@@ -180,8 +180,9 @@ class DisplayOrderDetails extends StatelessWidget {
     بمجموع ${order.totalPrice} شامل ${order.shippingAmount} شيكل توصيل
     ''';
 
+    int numberWhats = int.parse(whatsappNumber);
     String url =
-        "whatsapp://send?phone=+972598027987&text=${Uri.encodeFull(message)}";
+        "whatsapp://send?phone=+${numberWhats}&text=${Uri.encodeFull(message)}";
     if (!await launchUrl(Uri.parse(url))) {
       throw 'Could not launch $url';
     }

@@ -11,10 +11,9 @@ class CategoryWidget extends StatelessWidget {
   User? user = AuthHelper.authHelper.getLoggedUser();
 
   Category category;
-  CategoryWidget(this.category);
+  CategoryWidget(this.category, {super.key});
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       margin: const EdgeInsets.all(5),
       decoration: BoxDecoration(

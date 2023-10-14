@@ -4,8 +4,8 @@ import 'package:firebase_app/admin/models/order_item.dart';
 
 class OrderModel {
   String orderNumber;
-  num shippingAmount = 10;
-  num totalPrice = 10;
+  num shippingAmount = 5;
+  num totalPrice = 5;
   List<OrderItem> items = [];
   OrderModel(this.orderNumber);
 }

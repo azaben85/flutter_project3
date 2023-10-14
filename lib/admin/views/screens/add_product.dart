@@ -8,10 +8,10 @@ class AddNewProduct extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return CustomScaffold(
-      title: "المنتج",
-      body: Consumer<AdminProvider>(builder: (context, provider, w) {
-        return Container(
+    return Consumer<AdminProvider>(builder: (context, provider, w) {
+      return CustomScaffold(
+        title: provider.productID == null ? 'أضف منتج جديد' : 'تعديل المنتج',
+        body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           child: Form(
             key: provider.addProductKey,
@@ -21,23 +21,21 @@ class AddNewProduct extends StatelessWidget {
                   height: 30,
                 ),
                 InkWell(
-                  onTap: () {
-                    provider.pickImageForCategory();
-                  },
-                  child: Container(
-                    height: 150,
-                    width: 150,
-                    color: Colors.grey,
-                    child: provider.imageFile == null
-                        ? const Center(
-                            child: Icon(Icons.camera),
-                          )
-                        : Image.file(
-                            provider.imageFile!,
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                ),
+                    onTap: () {
+                      provider.pickImageForCategory();
+                    },
+                    child: SizedBox(
+                      width: 150,
+                      height: 150,
+                      child: provider.imageURL != null
+                          ? Image.network(provider.imageURL!)
+                          : (provider.imageFile == null)
+                              ? const Icon(
+                                  Icons.camera,
+                                  size: 60,
+                                )
+                              : Image.file(provider.imageFile!),
+                    )),
                 const SizedBox(
                   height: 30,
                 ),
@@ -70,14 +68,16 @@ class AddNewProduct extends StatelessWidget {
                     onPressed: () {
                       provider.addProduct();
                     },
-                    child: const Text('اضف منتج جديد'),
+                    child: Text(provider.productID == null
+                        ? 'أضف منتج جديد'
+                        : 'عدل المنتج'),
                   ),
                 )
               ],
             ),
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 }

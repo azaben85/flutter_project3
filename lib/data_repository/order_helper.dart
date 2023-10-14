@@ -7,11 +7,19 @@ class OrderHelper {
   OrderHelper._();
   static OrderHelper orderHelper = OrderHelper._();
 
+  num? shippingVaue;
+
+  setShipping(num value) {
+    shippingVaue = value;
+  }
+
   OrderModel? order;
   int lineNumber = 0;
   createNewOrder() {
     order = OrderModel(getCurrentTime());
     lineNumber = 0;
+    order!.shippingAmount = shippingVaue ?? 5;
+    order!.totalPrice = shippingVaue ?? 5;
   }
 
   cancelOrder() {
@@ -54,6 +62,10 @@ class OrderHelper {
     int i = order!.items.indexOf(item);
     log('$i');
     order!.items.removeAt(i);
+
+    if (order!.items.isEmpty) {
+      cancelOrder();
+    }
   }
 
   decreaseItemQTY(OrderItem item) {
@@ -66,6 +78,10 @@ class OrderHelper {
       order!.items.elementAt(i).quantity--;
     } else {
       removeItem(item);
+    }
+
+    if (order!.items.isEmpty) {
+      cancelOrder();
     }
   }
 

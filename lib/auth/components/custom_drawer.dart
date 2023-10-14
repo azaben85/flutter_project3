@@ -4,6 +4,7 @@ import 'package:firebase_app/admin/providers/car_provider.dart';
 import 'package:firebase_app/admin/views/screens/add_new_slider.dart';
 import 'package:firebase_app/admin/views/screens/car_displays_all.dart';
 import 'package:firebase_app/admin/views/screens/display_categories.dart';
+import 'package:firebase_app/admin/views/screens/display_categories_customer.dart';
 import 'package:firebase_app/admin/views/screens/my_car_list.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/auth/auth_helper.dart';
@@ -38,7 +39,8 @@ class CustomDrawer extends StatelessWidget {
           InkWell(
               onTap: () async {
                 await AuthHelper.authHelper.signOut();
-                AppRouter.appRouter.pushReplacement(AllCategoriesScreen());
+                AppRouter.appRouter
+                    .pushReplacement(AllCategoriesCustomerScreen());
               },
               child: Row(
                 children: const [

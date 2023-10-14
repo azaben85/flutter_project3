@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:firebase_app/admin/models/category.dart';
+import 'package:firebase_app/admin/models/commerce_settings.dart';
 import 'package:firebase_app/admin/models/product.dart';
 import 'package:firebase_app/admin/views/screens/add_category.dart';
+import 'package:firebase_app/admin/views/screens/add_product.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/data_repository/firestore_helper.dart';
 import 'package:firebase_app/data_repository/image_picker_helper.dart';
@@ -14,17 +16,50 @@ import 'package:firebase_app/admin/models/slider.dart';
 
 class AdminProvider extends ChangeNotifier {
   AdminProvider() {
+    getAllProducts();
     getAllCategories();
     getAllSliders();
+    getCommerceSettings();
   }
   GlobalKey<FormState> categoryKey = GlobalKey<FormState>();
+  GlobalKey<FormState> commerceSettingsKey = GlobalKey<FormState>();
   TextEditingController nameArController = TextEditingController();
   TextEditingController nameEnController = TextEditingController();
   File? imageFile;
   String? imageURL;
   String? catID;
 
+  CommerceSettingsModel? settings;
   int? sliderIndex = 0;
+
+  TextEditingController whatsappNumberController = TextEditingController();
+  TextEditingController shippingController = TextEditingController();
+
+  getCommerceSettings() async {
+    settings = await FirestorHelper.firestorHelper.getCommerceSettings();
+    whatsappNumberController.text = settings?.whatsappNumber ?? "";
+    shippingController.text = '${settings?.shippingValue ?? ""}';
+    notifyListeners();
+  }
+
+  updateCommerceSettings() async {
+    if (commerceSettingsKey.currentState!.validate()) {
+      if (settings == null) {
+        settings = CommerceSettingsModel(
+            whatsappNumber: whatsappNumberController.text,
+            shippingValue: double.parse('${shippingController.text}'));
+        String? documentId =
+            await FirestorHelper.firestorHelper.addCommerceSetting(settings!);
+
+        settings!.id = documentId;
+      } else {
+        settings!.whatsappNumber = whatsappNumberController.text;
+        settings!.shippingValue = double.parse('${shippingController.text}');
+        await FirestorHelper.firestorHelper.updateCommerceSetting(settings!);
+      }
+      AppRouter.appRouter.pop();
+    }
+  }
 
   setSliderIndex(int sliderIndex) {
     this.sliderIndex = sliderIndex;
@@ -33,7 +68,7 @@ class AdminProvider extends ChangeNotifier {
 
   List<Category>? allCategories;
 
-  loadProducts(String catID) async {
+  loadProducts(String? catID) async {
     this.catID = catID;
     await getAllProducts();
     notifyListeners();
@@ -60,13 +95,25 @@ class AdminProvider extends ChangeNotifier {
     imageFile = null;
     imageURL = null;
     catID = null;
-
+    productID = null;
+    allProducts = null;
     //notifyListeners();
   }
 
   String? validateText(String? text) {
     if (text == null || text.isEmpty) {
       return 'Must have value';
+    }
+    return null;
+  }
+
+  String? validateWhatsappNumber(String? text) {
+    if (text == null || text.isEmpty) {
+      return 'Must have value';
+    } else if (!isFloat(text)) {
+      return 'Must be numeric';
+    } else if (text.length != 14) {
+      return 'يجب ان يكون 14 رقم شامل المقدمة';
     }
     return null;
   }
@@ -117,35 +164,30 @@ class AdminProvider extends ChangeNotifier {
         AppRouter.appRouter.pop();
       }
     } else {
-      AppRouter.appRouter
-          .showCustomDialog('Image Required', 'Please select Image First');
+      AppRouter.appRouter.showCustomDialog('اختر صورة', 'رجاءا، اختر صورة');
     }
-  }
-
-  updateCategory() async {
-    // if (imageFile != null) {
-    //   if (categoryKey.currentState!.validate()) {
-    //     String imageUrl = await StorageHelper.storageHelper
-    //         .uploadNewImage('cat_images', imageFile!);
-    //     Category category = Category(
-    //         nameEn: nameEnController.text,
-    //         imageUrl: imageUrl,
-    //         nameAr: nameArController.text);
-    //     await FirestorHelper.firestorHelper.updateCategory(category);
-    //     clearFields();
-    //   }
-    // }
   }
 
   deleteCategory(Category category) async {
     AppRouter.appRouter.showProgressBar();
+    String imageURLForDelete = category.imageUrl;
+    String? catIdForDelete = category.id;
 
     bool status =
         await FirestorHelper.firestorHelper.deleteCategory(category.id!);
     if (status) {
       allCategories!.remove(category);
-      notifyListeners();
+      StorageHelper.storageHelper.deleteImages(imageURLForDelete);
+      List<Product>? productsToBeDeleted =
+          await getAllProductsForDelete(catIdForDelete ?? "na");
+      if (productsToBeDeleted != null) {
+        for (Product productToBeDeleted in productsToBeDeleted) {
+          await deleteProduct(productToBeDeleted);
+        }
+      }
     }
+    clearCatFields();
+    notifyListeners();
     //getAllCategories();
     AppRouter.appRouter.pop();
   }
@@ -156,31 +198,66 @@ class AdminProvider extends ChangeNotifier {
   GlobalKey<FormState> addProductKey = GlobalKey<FormState>();
 
   List<Product>? allProducts;
-
+  String? productID;
   clearProductFields() {
     productNameController.text = '';
     productDescController.text = '';
     productPriceController.text = '';
     imageFile = null;
     imageURL = null;
+    productID = null;
     //notifyListeners();
   }
 
+  loadProductForUpdate(Product product) {
+    productNameController.text = product.nameEn;
+    productDescController.text = product.descEn;
+    productPriceController.text = '${product.price}';
+    imageURL = product.imageUrl;
+    productID = product.id;
+
+    AppRouter.appRouter.push(AddNewProduct());
+  }
+
   getAllProducts() async {
-    allProducts = await FirestorHelper.firestorHelper.getAllProducts(catID!);
+    allProducts = await FirestorHelper.firestorHelper.getAllProducts(catID);
     notifyListeners();
   }
 
+  Future<List<Product>?> getAllProductsForDelete(String catIdForDelete) async {
+    List<Product>? allProductsForDelete =
+        await FirestorHelper.firestorHelper.getAllProducts(catIdForDelete);
+    return allProductsForDelete;
+  }
+
+  deleteProduct(Product product) async {
+    AppRouter.appRouter.showProgressBar();
+
+    String imageURLForDelete = product.imageUrl;
+    bool status =
+        await FirestorHelper.firestorHelper.deleteProduct(product.id!);
+    if (status) {
+      allProducts!.remove(product);
+      notifyListeners();
+      StorageHelper.storageHelper.deleteImages(imageURLForDelete);
+    }
+    //getAllCategories();
+    AppRouter.appRouter.pop();
+  }
+
   addProduct() async {
-    if (imageFile != null) {
+    if (imageFile != null || productID != null) {
       if (addProductKey.currentState!.validate()) {
         AppRouter.appRouter.showProgressBar();
         String url = '';
         if (imageFile != null) {
           url = await StorageHelper.storageHelper
               .uploadNewImage('cat_images', imageFile!);
-        } else {}
+        } else {
+          url = imageURL!;
+        }
         Product product = Product(
+            id: productID,
             nameEn: productNameController.text,
             imageUrl: url,
             nameAr: productNameController.text,
@@ -189,7 +266,12 @@ class AdminProvider extends ChangeNotifier {
             price: double.parse('${productPriceController.text}'),
             catId: catID);
 
-        await FirestorHelper.firestorHelper.addNewProduct(product);
+        if (productID == null) {
+          await FirestorHelper.firestorHelper.addNewProduct(product);
+        } else {
+          bool? updated =
+              await FirestorHelper.firestorHelper.updateProduct(product);
+        }
 
         clearProductFields();
         loadProducts(catID!);
@@ -197,8 +279,7 @@ class AdminProvider extends ChangeNotifier {
         AppRouter.appRouter.pop();
       }
     } else {
-      AppRouter.appRouter
-          .showCustomDialog('Image Required', 'Please select Image First');
+      AppRouter.appRouter.showCustomDialog('اختر صورة', 'رجاءا، اختر صورة');
     }
   }
 

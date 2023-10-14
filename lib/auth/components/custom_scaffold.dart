@@ -1,4 +1,5 @@
 import 'package:firebase_app/admin/views/screens/display_categories.dart';
+import 'package:firebase_app/admin/views/screens/display_categories_customer.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/auth/auth_helper.dart';
 import 'package:firebase_app/auth/components/custom_appbar_bottom.dart';
@@ -57,7 +58,8 @@ class CustomScaffold extends StatelessWidget {
               InkWell(
                   onTap: () async {
                     await AuthHelper.authHelper.signOut();
-                    AppRouter.appRouter.pushReplacement(AllCategoriesScreen());
+                    AppRouter.appRouter
+                        .pushReplacement(AllCategoriesCustomerScreen());
                   },
                   child: Icon(Icons.logout)),
             ...actions ?? []

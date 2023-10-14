@@ -1,7 +1,7 @@
 import 'package:firebase_app/admin/providers/admin_provider.dart';
 import 'package:firebase_app/admin/views/screens/add_product.dart';
 import 'package:firebase_app/admin/views/screens/widgets/cart_icon_widget.dart';
-import 'package:firebase_app/admin/views/screens/widgets/product_widget.dart';
+import 'package:firebase_app/admin/views/screens/widgets/display_product_gridview_widget.dart';
 import 'package:firebase_app/app_router/app_router.dart';
 import 'package:firebase_app/auth/auth_helper.dart';
 import 'package:firebase_app/auth/components/custom_scaffold.dart';
@@ -20,24 +20,23 @@ class DisplayProducts extends StatelessWidget {
         return CustomScaffold(
             actions: user != null
                 ? [
-                    CartIcon(),
+                    const CartIcon(),
                     IconButton(
                         onPressed: () {
+                          adminProvider.clearProductFields();
                           AppRouter.appRouter.push(AddNewProduct());
                         },
                         icon: const Icon(Icons.add)),
                   ]
-                : [CartIcon()],
+                : [const CartIcon()],
             title: 'المنتجات',
             body: adminProvider.allProducts == null
                 ? const Center(
                     child: Text('لا يوجد منتجات'),
                   )
-                : ListView.builder(
-                    itemCount: adminProvider.allProducts!.length,
-                    itemBuilder: (context, index) {
-                      return ProductWidget(adminProvider.allProducts![index]);
-                    }));
+                : DisplayProductGridviewWidget(
+                    edit: true,
+                  ));
       },
     );
   }

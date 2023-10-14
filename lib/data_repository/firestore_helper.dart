@@ -3,10 +3,12 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/admin/models/cars.dart';
 import 'package:firebase_app/admin/models/category.dart';
+import 'package:firebase_app/admin/models/commerce_settings.dart';
 import 'package:firebase_app/admin/models/product.dart';
 import 'package:firebase_app/admin/models/slider.dart';
 import 'package:firebase_app/admin/models/mylist.dart';
 import 'package:firebase_app/auth/auth_helper.dart';
+import 'package:firebase_app/helpers/app_helper.dart';
 import 'package:firebase_app/models/app_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -36,6 +38,47 @@ class FirestorHelper {
     } on Exception catch (e) {
       log(e.toString());
     }
+  }
+
+  Future<String?> addCommerceSetting(CommerceSettingsModel settings) async {
+    try {
+      DocumentReference<Map<String, dynamic>> document =
+          await firestore.collection('commerceSettings').add(settings.toMap());
+      return document.id;
+    } on Exception catch (e) {
+      log(e.toString());
+    }
+    return '';
+  }
+
+  Future<bool?> updateCommerceSetting(CommerceSettingsModel settings) async {
+    try {
+      await firestore
+          .collection('commerceSettings')
+          .doc(settings.id)
+          .update(settings.toMap());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<CommerceSettingsModel?> getCommerceSettings() async {
+    QuerySnapshot<Map<String, dynamic>> catsSnapshot =
+        await firestore.collection('commerceSettings').get();
+    List<CommerceSettingsModel> documents = catsSnapshot.docs.map(
+      (e) {
+        CommerceSettingsModel document =
+            CommerceSettingsModel.fromMap(e.data());
+        document.id = e.id;
+        return document;
+      },
+    ).toList();
+
+    if (documents.isEmpty) {
+      return null;
+    }
+    return documents[0];
   }
 
   /// admin methods
@@ -87,23 +130,41 @@ class FirestorHelper {
 
   addNewProduct(Product product) async {
     try {
-      DocumentReference<Map<String, dynamic>> productDocument = await firestore
-          .collection('categories')
-          .doc(product.catId)
+      String documentId = getCurrentDateTimeFormatted();
+      await firestore
           .collection('products')
-          .add(product.toMap());
-      return productDocument.id;
+          .doc(documentId)
+          .set(product.toMap());
+      return documentId;
     } on Exception catch (e) {
       log(e.toString());
     }
     return '';
   }
 
-  Future<List<Product>?> getAllProducts(String catId) async {
+  Future<List<Product>?> getAllProducts(String? catId) async {
+    if (catId == null) {
+      QuerySnapshot<Map<String, dynamic>> catsSnapshot = await firestore
+          // .collection('categories')
+          // .doc(catId)
+          .collection('products')
+          // .orderBy(FieldPath.documentId, descending: true)
+          .get();
+      List<Product> products = catsSnapshot.docs.map(
+        (e) {
+          Product prod = Product.fromMap(e.data());
+          prod.id = e.id;
+          return prod;
+        },
+      ).toList();
+      return products;
+    }
     QuerySnapshot<Map<String, dynamic>> catsSnapshot = await firestore
-        .collection('categories')
-        .doc(catId)
+        // .collection('categories')
+        // .doc(catId)
         .collection('products')
+        .where("catId", isEqualTo: catId)
+        .orderBy(FieldPath.documentId, descending: true)
         .get();
     List<Product> products = catsSnapshot.docs.map(
       (e) {
@@ -115,7 +176,28 @@ class FirestorHelper {
     return products;
   }
 
-  deleteProduct(as) {}
+  Future<bool> deleteProduct(String prodId) async {
+    try {
+      await firestore.collection('products').doc(prodId).delete();
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool?> updateProduct(Product product) async {
+    try {
+      await firestore
+          .collection('products')
+          .doc(product.id)
+          .update(product.toMap());
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
 
   Future<String?> addNewSlider(SliderModel slider) async {
     try {
